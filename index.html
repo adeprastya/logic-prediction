@@ -1,105 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Neural Network</title>
-	</head>
-	<body>
-		<form action="" id="architecture">
-			<h2>ARCHITECTURE</h2>
-
-			<div>
-				<label for="studyCase">studyCase</label>
-				<select name="studyCase" id="studyCase">
-					<option value="AND" selected>AND</option>
-					<option value="NAND">NAND</option>
-					<option value="OR">OR</option>
-					<option value="XOR">XOR</option>
-				</select>
-			</div>
-
-			<div>
-				<label for="numInputs">numInputs</label>
-				<input id="numInputs" type="number" value="2" />
-			</div>
-
-			<div>
-				<label for="numHidden">numHidden</label>
-				<input id="numHidden" type="number" value="4" disabled />
-			</div>
-
-			<div>
-				<label for="numHidden2">numHidden2</label>
-				<input id="numHidden2" type="number" value="2" disabled />
-			</div>
-
-			<div>
-				<label for="numOutputs">numOutputs</label>
-				<input id="numOutputs" type="number" value="1" />
-			</div>
-
-			<div>
-				<label for="activation">activation</label>
-				<select name="activation" id="activation">
-					<option value="sigmoid" selected>sigmoid</option>
-					<option value="tanh">tanh</option>
-					<option value="relu">relu</option>
-				</select>
-			</div>
-
-			<button id="create">Create</button>
-		</form>
-
-		<form action="" id="parameters">
-			<h2>PARAMETERS</h2>
-
-			<div>
-				<label for="learningRate">learningRate</label>
-				<input id="learningRate" type="number" value="0.1" />
-			</div>
-
-			<div>
-				<label for="epoch">epoch</label>
-				<input id="epoch" type="number" value="100" />
-			</div>
-
-			<div>
-				<label for="treshold">treshold</label>
-				<input id="treshold" value="0.5" type="number" />
-			</div>
-
-			<button id="train">Train</button>
-		</form>
-
-		<form action="" id="input">
-			<h2>INPUT</h2>
-
-			<div>
-				<label for="input1">input1</label>
-				<input id="input1" type="number" value="1" />
-			</div>
-
-			<div>
-				<label for="input2">input2</label>
-				<input id="input2" type="number" value="1" />
-			</div>
-
-			<button id="predict">Predict</button>
-		</form>
-
-		<div id="output">
-			<h2>OUTPUT</h2>
-			<h3>
-				Prediction :
-				<span id="prediction"></span>
-			</h3>
-			<h3>
-				Result :
-				<span id="result"></span>
-			</h3>
-		</div>
-
-		<script type="module" src="main.js"></script>
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
