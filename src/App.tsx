@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-function App() {
-  const [count, setCount] = useState(0)
+import ArchForm from "@/components/organisms/ArchForm";
+import ParamForm from "@/components/organisms/ParamForm";
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+import { ModelsContext } from "@/context/ModelsContext";
+import { useContext } from "react";
+
+export default function App() {
+	const { arch, setArch } = useContext<any>(ModelsContext);
+	
+	return (
+		<>
+			<Tabs onValueChange={(e) => setArch({ ...arch, studyCase: e })} defaultValue="and" className="w-[400px]">
+				<TabsList>
+					<TabsTrigger value="and">AND</TabsTrigger>
+					<TabsTrigger value="or">OR</TabsTrigger>
+					<TabsTrigger value="nand">NAND</TabsTrigger>
+					<TabsTrigger value="xor">XOR</TabsTrigger>
+				</TabsList>
+
+				<TabsContent value="and">
+					<ArchForm type="P" />
+				</TabsContent>
+
+				<TabsContent value="or">
+					<ArchForm type="P" />
+				</TabsContent>
+
+				<TabsContent value="nand">
+					<ArchForm type="P" />
+				</TabsContent>
+
+				<TabsContent value="xor">
+					<ArchForm type="MLP" />
+				</TabsContent>
+			</Tabs>
+
+			<ParamForm />
+		</>
+	);
 }
-
-export default App

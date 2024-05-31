@@ -1,4 +1,4 @@
-import Layer from "./Layer.js";
+import Layer from "./Layer.ts";
 
 export default class MLP {
 	constructor({ numInputs, numHidden, numHidden2, numOutputs, activation }) {

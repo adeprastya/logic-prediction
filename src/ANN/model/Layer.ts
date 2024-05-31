@@ -1,4 +1,4 @@
-import Neuron from "./Neuron.js";
+import Neuron from "./Neuron.ts";
 
 export default class Layer {
 	constructor(numNeurons, numInputs, activation) {
