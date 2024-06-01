@@ -8,16 +8,6 @@ export default function ArchForm({ type }: { type: "P" | "MLP" }) {
 	return (
 		<form action="">
 			<h2>{type === "P" ? "Perceptron" : "MLP"}</h2>
-
-			<div>
-				<label htmlFor="numInput">Input</label>
-				<input
-					id="numInput"
-					type="number"
-					onChange={(e) => setArch({ ...arch, numInputs: Number.parseInt(e.target.value) })}
-				/>
-			</div>
-
 			{type === "MLP" && (
 				<>
 					<div>

@@ -5,10 +5,11 @@ import ParamForm from "@/components/organisms/ParamForm";
 
 import { ModelsContext } from "@/context/ModelsContext";
 import { useContext } from "react";
+import InputForm from "./components/organisms/InputForm";
 
 export default function App() {
 	const { arch, setArch } = useContext<any>(ModelsContext);
-	
+
 	return (
 		<>
 			<Tabs onValueChange={(e) => setArch({ ...arch, studyCase: e })} defaultValue="and" className="w-[400px]">
@@ -37,6 +38,8 @@ export default function App() {
 			</Tabs>
 
 			<ParamForm />
+
+			<InputForm />
 		</>
 	);
 }
