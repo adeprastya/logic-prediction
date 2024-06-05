@@ -1,45 +1,22 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import ArchForm from "@/components/organisms/ArchForm";
 import ParamForm from "@/components/organisms/ParamForm";
+import InputForm from "@/components/organisms/InputForm";
 
-import { ModelsContext } from "@/context/ModelsContext";
 import { useContext } from "react";
-import InputForm from "./components/organisms/InputForm";
+import { ModelsContext } from "@/context/ModelsContext";
 
 export default function App() {
-	const { arch, setArch } = useContext<any>(ModelsContext);
+	const { model, arch, result } = useContext<any>(ModelsContext);
 
 	return (
 		<>
-			<Tabs onValueChange={(e) => setArch({ ...arch, studyCase: e })} defaultValue="and" className="w-[400px]">
-				<TabsList>
-					<TabsTrigger value="and">AND</TabsTrigger>
-					<TabsTrigger value="or">OR</TabsTrigger>
-					<TabsTrigger value="nand">NAND</TabsTrigger>
-					<TabsTrigger value="xor">XOR</TabsTrigger>
-				</TabsList>
+			<ArchForm />
 
-				<TabsContent value="and">
-					<ArchForm type="P" />
-				</TabsContent>
+			{model ? <ParamForm /> : <p>Model is not created</p>}
 
-				<TabsContent value="or">
-					<ArchForm type="P" />
-				</TabsContent>
+			{arch.isTrained ? <InputForm /> : <p>Model is not trained</p>}
 
-				<TabsContent value="nand">
-					<ArchForm type="P" />
-				</TabsContent>
-
-				<TabsContent value="xor">
-					<ArchForm type="MLP" />
-				</TabsContent>
-			</Tabs>
-
-			<ParamForm />
-
-			<InputForm />
+			{result && <p>Result: {result}</p>}
 		</>
 	);
 }

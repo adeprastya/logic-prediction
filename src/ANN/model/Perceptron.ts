@@ -1,11 +1,29 @@
-import Neuron from "./Neuron.ts";
+import Neuron from "./Neuron";
+
+interface PerceptronConfig {
+	numInputs: number;
+	numOutputs: number;
+	activation: "sigmoid" | "tanh" | "relu";
+}
+
+interface TrainingData {
+	xData: number[][];
+	yData: number[][];
+}
+
+interface TrainingConfig {
+	learningRate: number;
+	epochs: number;
+}
 
 export default class Perceptron {
-	constructor({ numInputs, numOutputs, activation }) {
+	private neurons: Neuron[];
+
+	constructor({ numInputs, numOutputs, activation }: PerceptronConfig) {
 		this.neurons = Array.from({ length: numOutputs }, () => new Neuron(numInputs, activation));
 	}
 
-	train({ xData, yData }, { learningRate, epochs }) {
+	train({ xData, yData }: TrainingData, { learningRate, epochs }: TrainingConfig): void {
 		for (let epoch = 0; epoch < epochs; epoch++) {
 			for (let i = 0; i < xData.length; i++) {
 				const input = xData[i];
@@ -25,7 +43,7 @@ export default class Perceptron {
 		}
 	}
 
-	predict(input) {
+	predict(input: number[]): number[] {
 		return this.neurons.map((neuron) => neuron.activate(input));
 	}
 }

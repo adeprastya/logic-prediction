@@ -1,79 +1,79 @@
-import { AND, NAND, OR, XOR } from "@/ANN/data/data";
-import Perceptron from "@/ANN/model/Perceptron";
-import MLP from "@/ANN/model/MLP";
-import { createContext, useEffect, useState, useCallback } from "react";
-
+import MLP from "@/ANN/model/MLP.ts";
+import { createContext, useEffect, useState } from "react";
 export const ModelsContext = createContext({});
 
+type Arch = {
+	numInputs: number;
+	numOutputs: number;
+	numHidden: number | null;
+	numHidden2: number | null;
+	activation: string | null;
+	isTrained: boolean;
+};
+type Param = {
+	epochs: number | null;
+	learningRate: number | null;
+	threshold: number | null;
+	lossFunction: string | null;
+	studyCase: string | null;
+};
+type Input = {
+	inputA: number | null;
+	inputB: number | null;
+};
+
+const initArch = {
+	numInputs: 2,
+	numOutputs: 1,
+	numHidden: null,
+	numHidden2: null,
+	activation: null,
+	isTrained: false
+} as Arch;
+const initParam = {
+	epochs: null,
+	learningRate: null,
+	threshold: null,
+	lossFunction: null,
+	studyCase: null
+} as Param;
+const initInput = {
+	inputA: null,
+	inputB: null
+} as Input;
+
 export default function ModelsContextProvider({ children }: { children: React.ReactNode }) {
-  const [arch, setArch] = useState({ numInputs: 2, numOutputs: 1, studyCase: "and" });
-  const [model, setModel] = useState(null);
-  const [param, setParam] = useState({ data: {}, train: false });
-  const [input, setInput] = useState({});
+	const [model, setModel] = useState(null);
+	const [arch, setArch] = useState(initArch);
+	const [param, setParam] = useState(initParam);
+	const [input, setInput] = useState(initInput);
+	const [result, setResult] = useState(null);
 
-  const initializeModel = useCallback(() => {
-    const { numInputs, activation, numHidden, numHidden2 } = arch;
-    if (numInputs && activation) {
-      if (numHidden && numHidden2) {
-        setModel(new MLP(arch));
-      } else {
-        setModel(new Perceptron(arch));
-      }
-    }
-  }, [arch]);
+	useEffect(() => {
+		if (arch.numHidden !== null && arch.numHidden2 !== null && arch.activation !== null) {
+			setModel(new MLP(arch));
+		}
 
-  const loadData = useCallback(() => {
-    const { studyCase } = arch;
-    let data;
-    switch (studyCase) {
-      case "and":
-        data = AND;
-        break;
-      case "or":
-        data = OR;
-        break;
-      case "nand":
-        data = NAND;
-        break;
-      case "xor":
-        data = XOR;
-        break;
-      default:
-        data = {};
-    }
-    setParam((prev) => ({ ...prev, data }));
-  }, [arch]);
+		console.log(arch);
+	}, [arch]);
 
-  useEffect(() => {
-    initializeModel();
-    loadData();
-    console.log("arch", arch);
-  }, [arch, initializeModel, loadData]);
+	useEffect(() => {
+		setArch((arch) => ({ ...arch, isTrained: false }));
 
-  useEffect(() => {
-    console.log("model", model);
-  }, [model]);
+		console.log(param);
+	}, [param]);
 
-  useEffect(() => {
-    if (param.train && model) {
-      model.train(param.data, { ...param });
-      setParam((prev) => ({ ...prev, train: false }));
-    }
-    console.log("param", param);
-  }, [param, model]);
+	useEffect(() => {
+		if (input.inputA !== null && input.inputB !== null) {
+			const result = model.predict([input.inputA, input.inputB]);
 
-  useEffect(() => {
-    const { inputA, inputB } = input;
-    if (inputA !== undefined && inputB !== undefined) {
-      console.log(model.predict([inputA, inputB]));
-      console.log("ok");
-    }
-    console.log("input", input);
-  }, [input, model]);
+			setResult(result);
+		}
+	}, [input]);
 
-  return (
-    <ModelsContext.Provider value={{ arch, setArch, model, setModel, param, setParam, input, setInput }}>
-      {children}
-    </ModelsContext.Provider>
-  );
+	return (
+		<ModelsContext.Provider value={{ arch, setArch, model, setModel, param, setParam, input, setInput, result }}>
+			{children}
+		</ModelsContext.Provider>
+	);
 }

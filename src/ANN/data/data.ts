@@ -8,7 +8,7 @@ export const AND = {
 	yData: [[0], [0], [0], [1]]
 };
 
-export const NAND = {
+export const ANDNOT = {
 	xData: [
 		[0, 0],
 		[0, 1],

@@ -1,36 +1,45 @@
 class Activation {
-	sigmoid(x) {
+	sigmoid(x: number): number {
 		return 1 / (1 + Math.exp(-x));
 	}
-	sigmoidDerivative(x) {
+
+	sigmoidDerivative(x: number): number {
 		const sig = this.sigmoid(x);
 		return sig * (1 - sig);
 	}
 
-	tanh(x) {
+	tanh(x: number): number {
 		return Math.tanh(x);
 	}
-	tanhDerivative(x) {
+
+	tanhDerivative(x: number): number {
 		return 1 - Math.pow(Math.tanh(x), 2);
 	}
 
-	relu(x) {
+	relu(x: number): number {
 		return Math.max(0, x);
 	}
-	reluDerivative(x) {
+
+	reluDerivative(x: number): number {
 		return x > 0 ? 1 : 0;
 	}
 }
 
+type ActivationFunction = "sigmoid" | "tanh" | "relu";
+
 export default class Neuron extends Activation {
-	constructor(numInputs, activation) {
+	public weights: number[];
+	public bias: number;
+	public activation: ActivationFunction;
+
+	constructor(numInputs: number, activation: ActivationFunction) {
 		super();
 		this.weights = Array.from({ length: numInputs }, () => Math.random() * 2 - 1);
 		this.bias = Math.random() * 2 - 1;
 		this.activation = activation;
 	}
 
-	activate(inputs) {
+	activate(inputs: number[]): number {
 		const sum = inputs.reduce((acc, input, i) => acc + input * this.weights[i], this.bias);
 
 		switch (this.activation) {
@@ -41,12 +50,11 @@ export default class Neuron extends Activation {
 			case "relu":
 				return this.relu(sum);
 			default:
-				console.error(`Invalid activation function: ${this.activation}`);
-				break;
+				throw new Error(`Invalid activation function: ${this.activation}`);
 		}
 	}
 
-	derivative(value) {
+	derivative(value: number): number {
 		switch (this.activation) {
 			case "sigmoid":
 				return this.sigmoidDerivative(value);
@@ -55,8 +63,7 @@ export default class Neuron extends Activation {
 			case "relu":
 				return this.reluDerivative(value);
 			default:
-				console.error(`Invalid activation function: ${this.activation}`);
-				break;
+				throw new Error(`Invalid activation function: ${this.activation}`);
 		}
 	}
 }

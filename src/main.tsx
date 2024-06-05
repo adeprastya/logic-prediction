@@ -1,6 +1,6 @@
+import "@/assets/css/global.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "../src/css/global.css";
 import ContextProvider from "@/context/ContextProvider.tsx";
 import App from "./App.tsx";
 

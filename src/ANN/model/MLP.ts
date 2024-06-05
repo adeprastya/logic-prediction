@@ -1,14 +1,41 @@
-import Layer from "./Layer.ts";
+import Layer from "./Layer";
+
+interface MLPConfig {
+	numInputs: number;
+	numHidden: number;
+	numHidden2: number;
+	numOutputs: number;
+	activation: "sigmoid" | "tanh" | "relu";
+}
+
+interface TrainingData {
+	xData: number[][];
+	yData: number[][];
+}
+
+interface TrainingConfig {
+	learningRate: number;
+	epochs: number;
+	lossFunction: "mse" | "bce";
+}
 
 export default class MLP {
-	constructor({ numInputs, numHidden, numHidden2, numOutputs, activation }) {
-		this.hiddenLayer = new Layer(numHidden, numInputs, activation);
-		this.hiddenLayer2 = new Layer(numHidden2, numHidden, activation);
-		this.outputLayer = new Layer(numOutputs, numHidden2, activation);
+	private hiddenLayer: Layer;
+	private hiddenLayer2: Layer;
+	private outputLayer: Layer;
+
+	constructor({ numInputs, numHidden, numHidden2, numOutputs, activation }: MLPConfig) {
+		this.hiddenLayer = new Layer({ numNeurons: numHidden, numInputs, activation });
+		this.hiddenLayer2 = new Layer({ numNeurons: numHidden2, numInputs: numHidden, activation });
+		this.outputLayer = new Layer({ numNeurons: numOutputs, numInputs: numHidden2, activation });
 	}
 
-	train({ xData, yData }, { learningRate, epochs }) {
+	train({ xData, yData }: TrainingData, { learningRate, epochs, lossFunction }: TrainingConfig): number[] {
+		const losses: number[] = [];
+
 		for (let epoch = 0; epoch < epochs; epoch++) {
+			let totalLoss = 0;
+
 			for (let i = 0; i < xData.length; i++) {
 				const inputs = xData[i];
 				const target = yData[i];
@@ -17,6 +44,26 @@ export default class MLP {
 				const hiddenOutputs = this.hiddenLayer.activate(inputs);
 				const hiddenOutputs2 = this.hiddenLayer2.activate(hiddenOutputs);
 				const outputs = this.outputLayer.activate(hiddenOutputs2);
+
+				// Calculate loss (Mean Squared Error or Binary Cross Entropy)
+				let loss: number;
+				switch (lossFunction) {
+					case "mse":
+						loss = target.reduce((sum, t, j) => sum + Math.pow(t - outputs[j], 2), 0) / target.length;
+						break;
+					case "bce":
+						loss =
+							-target.reduce((sum, t, j) => {
+								const epsilon = 1e-15;
+								const clippedOutput = Math.max(epsilon, Math.min(1 - epsilon, outputs[j])); // Clip output to avoid log(0) or log(1)
+								return sum + (t * Math.log(clippedOutput) + (1 - t) * Math.log(1 - clippedOutput));
+							}, 0) / target.length;
+
+						break;
+					default:
+						throw new Error(`Invalid loss function: ${lossFunction}`);
+				}
+				totalLoss += loss;
 
 				// BACKWARD PASS (Backpropagation)
 				// Calculate output errors and deltas
@@ -39,7 +86,7 @@ export default class MLP {
 					(error, j) => error * this.hiddenLayer.neurons[j].derivative(hiddenOutputs[j])
 				);
 
-				// UPDATING WEIGHTS AND BIASES
+				// UPDATE WEIGHTS AND BIASES
 				// Update output layer weights and biases
 				this.outputLayer.neurons.forEach((neuron, j) => {
 					neuron.weights.forEach((_, k) => {
@@ -63,13 +110,16 @@ export default class MLP {
 					});
 					neuron.bias += learningRate * hiddenDeltas[j];
 				});
-
-				console.log(`${this.hiddenLayer.neurons[0].weights}`);
 			}
+
+			// Calculate average loss
+			losses.push(totalLoss / xData.length);
 		}
+
+		return losses;
 	}
 
-	predict(inputs) {
+	predict(inputs: number[]): number[] {
 		const hiddenOutputs = this.hiddenLayer.activate(inputs);
 		const hiddenOutputs2 = this.hiddenLayer2.activate(hiddenOutputs);
 		return this.outputLayer.activate(hiddenOutputs2);
