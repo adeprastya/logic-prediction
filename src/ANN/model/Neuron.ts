@@ -25,15 +25,18 @@ class Activation {
 	}
 }
 
-type ActivationFunction = "sigmoid" | "tanh" | "relu";
+type ActivationFunction = "sigmoid" | "tanh" | "relu" | "none";
 
 export default class Neuron extends Activation {
 	public weights: number[];
 	public bias: number;
 	public activation: ActivationFunction;
 
-	constructor(numInputs: number, activation: ActivationFunction) {
+	constructor(numInputs: number | undefined, activation: ActivationFunction) {
 		super();
+		if (numInputs === undefined) {
+			throw new Error("Number of inputs is required");
+		}
 		this.weights = Array.from({ length: numInputs }, () => Math.random() * 2 - 1);
 		this.bias = Math.random() * 2 - 1;
 		this.activation = activation;

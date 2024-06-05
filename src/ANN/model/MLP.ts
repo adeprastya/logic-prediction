@@ -3,9 +3,9 @@ import Layer from "./Layer";
 interface MLPConfig {
 	numInputs: number;
 	numOutputs: number;
-	numHidden: number;
-	numHidden2: number;
-	activation: "sigmoid" | "tanh" | "relu";
+	numHidden?: number;
+	numHidden2?: number;
+	activation: "sigmoid" | "tanh" | "relu" | "none";
 }
 
 interface TrainingData {
@@ -25,6 +25,10 @@ export default class MLP {
 	private outputLayer: Layer;
 
 	constructor({ numInputs, numHidden, numHidden2, numOutputs, activation }: MLPConfig) {
+		if (numHidden === undefined || numHidden2 === undefined || numOutputs === undefined || activation === undefined) {
+			throw new Error("Number of neurons is required");
+		}
+
 		this.hiddenLayer = new Layer({ numNeurons: numHidden, numInputs, activation });
 		this.hiddenLayer2 = new Layer({ numNeurons: numHidden2, numInputs: numHidden, activation });
 		this.outputLayer = new Layer({ numNeurons: numOutputs, numInputs: numHidden2, activation });

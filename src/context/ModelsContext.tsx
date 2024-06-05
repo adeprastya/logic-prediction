@@ -4,9 +4,9 @@ import React, { createContext, useEffect, useState, ReactNode, ReactElement } fr
 interface Arch {
 	numInputs: number;
 	numOutputs: number;
-	numHidden?: number;
-	numHidden2?: number;
-	activation?: string;
+	numHidden: number;
+	numHidden2: number;
+	activation: "sigmoid" | "tanh" | "relu" | "none";
 }
 
 interface Param {
@@ -32,14 +32,16 @@ interface ModelsContextType {
 	input: Input;
 	setInput: React.Dispatch<React.SetStateAction<Input>>;
 	result: number[] | undefined;
+	isTrained: boolean;
+	setIsTrained: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initArch: Arch = {
 	numInputs: 2,
 	numOutputs: 1,
-	numHidden: undefined,
-	numHidden2: undefined,
-	activation: undefined
+	numHidden: 0,
+	numHidden2: 0,
+	activation: "none"
 };
 
 const initParam: Param = {
@@ -66,7 +68,7 @@ export default function ModelsContextProvider({ children }: { children: ReactNod
 	const [isTrained, setIsTrained] = useState(false);
 
 	useEffect(() => {
-		if (arch.numHidden !== undefined && arch.numHidden2 !== undefined && arch.activation !== undefined) {
+		if (arch.numHidden !== 0 && arch.numHidden2 !== 0 && arch.activation !== "none") {
 			setModel(new MLP(arch));
 		}
 

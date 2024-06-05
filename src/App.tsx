@@ -11,7 +11,7 @@ const style = {
 };
 
 export default function App() {
-	const { model, isTrained, result, param } = useContext<any>(ModelsContext);
+	const { model, isTrained, result, param, input } = useContext<any>(ModelsContext);
 
 	return (
 		<div className={style.container}>
@@ -23,6 +23,7 @@ export default function App() {
 
 			{result && (
 				<>
+					<p className={style.result}>{`${input.inputA} ${param.studyCase} ${input.inputB}`}</p>
 					<p className={style.result}>Prediction: {result}</p>
 					<p className={style.result}>Result: {result > param.threshold ? "True" : "False"}</p>
 				</>
