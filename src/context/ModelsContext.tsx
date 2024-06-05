@@ -1,78 +1,101 @@
-import MLP from "@/ANN/model/MLP.ts";
-import { createContext, useEffect, useState } from "react";
-export const ModelsContext = createContext({});
+import MLP from "@/ANN/model/MLP";
+import React, { createContext, useEffect, useState, ReactNode, ReactElement } from "react";
 
-type Arch = {
+interface Arch {
 	numInputs: number;
 	numOutputs: number;
-	numHidden: number | null;
-	numHidden2: number | null;
-	activation: string | null;
-	isTrained: boolean;
-};
-type Param = {
-	epochs: number | null;
-	learningRate: number | null;
-	threshold: number | null;
-	lossFunction: string | null;
-	studyCase: string | null;
-};
-type Input = {
-	inputA: number | null;
-	inputB: number | null;
-};
+	numHidden?: number;
+	numHidden2?: number;
+	activation?: string;
+}
 
-const initArch = {
+interface Param {
+	epochs?: number;
+	learningRate?: number;
+	threshold?: number;
+	lossFunction?: string;
+	studyCase?: string;
+}
+
+interface Input {
+	inputA?: number;
+	inputB?: number;
+}
+
+interface ModelsContextType {
+	arch: Arch;
+	setArch: React.Dispatch<React.SetStateAction<Arch>>;
+	model: MLP | undefined;
+	setModel: React.Dispatch<React.SetStateAction<MLP | undefined>>;
+	param: Param;
+	setParam: React.Dispatch<React.SetStateAction<Param>>;
+	input: Input;
+	setInput: React.Dispatch<React.SetStateAction<Input>>;
+	result: number[] | undefined;
+}
+
+const initArch: Arch = {
 	numInputs: 2,
 	numOutputs: 1,
-	numHidden: null,
-	numHidden2: null,
-	activation: null,
-	isTrained: false
-} as Arch;
-const initParam = {
-	epochs: null,
-	learningRate: null,
-	threshold: null,
-	lossFunction: null,
-	studyCase: null
-} as Param;
-const initInput = {
-	inputA: null,
-	inputB: null
-} as Input;
+	numHidden: undefined,
+	numHidden2: undefined,
+	activation: undefined
+};
 
-export default function ModelsContextProvider({ children }: { children: React.ReactNode }) {
-	const [model, setModel] = useState(null);
-	const [arch, setArch] = useState(initArch);
-	const [param, setParam] = useState(initParam);
-	const [input, setInput] = useState(initInput);
-	const [result, setResult] = useState(null);
+const initParam: Param = {
+	epochs: undefined,
+	learningRate: undefined,
+	threshold: undefined,
+	lossFunction: undefined,
+	studyCase: undefined
+};
+
+const initInput: Input = {
+	inputA: undefined,
+	inputB: undefined
+};
+
+export const ModelsContext = createContext<ModelsContextType | undefined>(undefined);
+
+export default function ModelsContextProvider({ children }: { children: ReactNode }): ReactElement {
+	const [model, setModel] = useState<MLP | undefined>(undefined);
+	const [arch, setArch] = useState<Arch>(initArch);
+	const [param, setParam] = useState<Param>(initParam);
+	const [input, setInput] = useState<Input>(initInput);
+	const [result, setResult] = useState<number[] | undefined>(undefined);
+	const [isTrained, setIsTrained] = useState(false);
 
 	useEffect(() => {
-		if (arch.numHidden !== null && arch.numHidden2 !== null && arch.activation !== null) {
+		if (arch.numHidden !== undefined && arch.numHidden2 !== undefined && arch.activation !== undefined) {
 			setModel(new MLP(arch));
 		}
 
-		console.log(arch);
+		setResult(undefined);
 	}, [arch]);
 
 	useEffect(() => {
-		setArch((arch) => ({ ...arch, isTrained: false }));
-
-		console.log(param);
-	}, [param]);
-
-	useEffect(() => {
-		if (input.inputA !== null && input.inputB !== null) {
-			const result = model.predict([input.inputA, input.inputB]);
-
-			setResult(result);
+		if (
+			input.inputA !== undefined &&
+			!isNaN(input.inputA) &&
+			input.inputB !== undefined &&
+			!isNaN(input.inputB) &&
+			model
+		) {
+			setResult(model.predict([input.inputA, input.inputB]));
+		} else {
+			setResult(undefined);
 		}
 	}, [input]);
 
+	useEffect(() => {
+		setIsTrained(false);
+		setResult(undefined);
+	}, [model, param]);
+
 	return (
-		<ModelsContext.Provider value={{ arch, setArch, model, setModel, param, setParam, input, setInput, result }}>
+		<ModelsContext.Provider
+			value={{ arch, setArch, model, setModel, param, setParam, input, setInput, result, isTrained, setIsTrained }}
+		>
 			{children}
 		</ModelsContext.Provider>
 	);

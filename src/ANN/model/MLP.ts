@@ -2,9 +2,9 @@ import Layer from "./Layer";
 
 interface MLPConfig {
 	numInputs: number;
+	numOutputs: number;
 	numHidden: number;
 	numHidden2: number;
-	numOutputs: number;
 	activation: "sigmoid" | "tanh" | "relu";
 }
 
